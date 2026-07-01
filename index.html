@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="style.css">
 
   </head>
+
+
   <body>
     <header>
       <h1>Personal Library</h1>
@@ -17,7 +19,7 @@
       <section>
         <h2>Add book</h2>
 
-        <form>
+        <form id="bookForm">
             <div class="form-group">
           <label for="bookTitle">Book Title</label>
           <input type="text" id="bookTitle" />
@@ -72,9 +74,14 @@
               <th>Status</th>
             </tr>
             </thead>
+            
+             <tbody id="bookTableBody">
+             </tbody>
+
           </table>
         </section>
       </section>
     </main>
+    <script src ="script.js"></script>
   </body>
 </html>
