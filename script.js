@@ -7,6 +7,8 @@ const genre = document.getElementById("genre");
 const status = document.getElementById("status");
 const bookTableBody = document.getElementById("bookTableBody");
 const submitButton = document.querySelector('button[type="submit"]');
+const searchInput = document.getElementById("searchInput");
+const noResultMessage = document.getElementById("noResultMessage");
 
 const books = JSON.parse(localStorage.getItem("books")) || [];
 let editIndex = -1;
@@ -58,6 +60,15 @@ const yearValue= publicationYear.value;
 const genreValue= genre.value;
 const statusValue = status.value;
 
+if(
+    titleValue===""||
+    authorValue===""||
+    yearValue===""
+){
+    alert("Please fill in all fields");
+    return;
+}
+
 const book = {
     title: titleValue,
     author: authorValue,
@@ -81,7 +92,7 @@ books.forEach(function(book, index){
 });
 
 editIndex = -1;
-submitButton.textContext = "Add";
+submitButton.textContent = "Add";
 
 form.reset();
 
@@ -89,4 +100,33 @@ form.reset();
 
 books.forEach(function(book,index){
     addBookToTable(book,index);
+    
 });
+
+searchInput.addEventListener("keyup",function(){
+
+    const searchText = searchInput.value.toLowerCase();
+    const rows = bookTableBody.querySelectorAll("tr");
+
+    let visibleRows =0;
+
+    rows.forEach(function(row){
+
+        const rowText = row.textContent.toLowerCase();
+
+        if(rowText.includes(searchText)){
+            row.style.display="";
+            visibleRows++;
+
+        }else{
+            row.style.display="none";
+        }
+    });
+
+    if(visibleRows=== 0){
+        noResultMessage.style.display="block";
+    }else{
+        noResultMessage.style.display="none";
+    }
+
+    });

@@ -44,6 +44,7 @@ button{
     border: none;
     border-radius: 5px;
     cursor: pointer;
+
 }
 
 button:hover{
@@ -81,10 +82,45 @@ tbody tr:nth-child(even){
     main{
         width: 95%;
     }
+
+    table{
+        display:block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    th,td{
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .edit-btn,
+    .delete-btn{
+        width: auto;
+        padding: 6px 10px;
+        margin: 2px;
+    }
 }
 
 form{
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+#searchInput{
+    margin-bottom:20px;
+}
+
+#noResultMessage{
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.edit-btn,
+.delete-btn{
+    width: auto;
+    padding: 8px 12px;
+    margin-right: 5px;
 }
