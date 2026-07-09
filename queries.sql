@@ -188,4 +188,23 @@ INNER JOIN Member
 ON Borrow.MemberID = Member.MemberID
 ORDER BY Borrow.BorrowDate DESC;
 
+
+SELECT COUNT (*) FROM Book;
+
+SELECT Status, COUNT(*) FROM Book GROUP BY Status;
+
+SELECT Genre,COUNT(*) FROM Book GROUP BY Genre;
+
+SELECT Member.Name,COUNT(*) FROM Borrow
+INNER JOIN Member ON Borrow.MemberID = Member.MemberID
+GROUP BY Member.Name;
+
+SELECT AVG(PublicationYear) FROM Book;
+
+SELECT Title, PublicationYear FROM Book
+WHERE PublicationYear > 
+(
+SELECT AVG (PublicationYear)
+FROM Book);
+
 </sql><current_tab id="0"/></tab_sql></sqlb_project>
