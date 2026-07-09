@@ -134,5 +134,58 @@ SELECT * FROM Book WHERE Title LIKE 'H%';
 SELECT * FROM Book WHERE Genre = 'Science';
 SELECT * FROM Book ORDER BY Title;
 
+SELECT * FROM Borrow 
+INNER JOIN Book 
+ON Borrow.BookID= Book.BookID;
+
+SELECT Member.Name, Book.Title 
+FROM Borrow INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID
+INNER JOIN Book
+ON Borrow.BookID=Book.BookID;
+
+SELECT Book.Title FROM Book
+LEFT JOIN  Borrow
+ON Book.BookID = Borrow.BookID
+WHERE Borrow.BookID IS NULL;
+
+SELECT Book.Title, Member.Name, Borrow.BorrowDate
+FROM Borrow
+INNER JOIN Book
+ON Borrow.BookID = Book.BookID
+INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID;
+
+SELECT Book.Title
+FROM Borrow
+INNER JOIN Book
+ON Borrow.BookID = Book.BookID
+INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID
+WHERE Member.Name = 'Ali';
+
+SELECT Book.Title, Member.Name
+FROM Borrow
+INNER JOIN Book
+ON Borrow.BookID = Book.BookID
+INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID
+WHERE Book.Genre = 'Fantasy';
+
+SELECT Book.Title, Member.Name
+FROM Borrow
+INNER JOIN Book
+ON Borrow.BookID = Book.BookID
+INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID
+ORDER BY Book.Title;
+
+SELECT Book.Title, Member.Name, Borrow.BorrowDate
+FROM Borrow
+INNER JOIN Book
+ON Borrow.BookID = Book.BookID
+INNER JOIN Member
+ON Borrow.MemberID = Member.MemberID
+ORDER BY Borrow.BorrowDate DESC;
 
 </sql><current_tab id="0"/></tab_sql></sqlb_project>
