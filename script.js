@@ -10,18 +10,29 @@ const submitButton = document.querySelector('button[type="submit"]');
 const searchInput = document.getElementById("searchInput");
 const noResultMessage = document.getElementById("noResultMessage");
 
-const books = JSON.parse(localStorage.getItem("books")) || [];
+let books=[];
 let editIndex = -1;
+
+async function loadBooks(){
+    const response = await fetch("http://127.0.0.1:5000/api/books");
+    books = await response.json();
+
+    bookTableBody.innerHTML="";
+
+    books.forEach(function(book,index){
+        addBookToTable(book,index);
+    });
+}
 
 function addBookToTable(book,index){
     const newRow = document.createElement("tr");
 
     newRow.innerHTML=`
-        <td>${book.title}</td>
-        <td>${book.author}</td>
-        <td>${book.year}</td>
-        <td>${book.genre}</td>
-        <td>${book.status}</td>
+        <td>${book.Title}</td>
+        <td>${book.Author}</td>
+        <td>${book.PublicationYear}</td>
+        <td>${book.Genre}</td>
+        <td>${book.Status}</td>
         <td>
             <button class ="edit-btn"> Edit</button>
             <button class="delete-btn">Delete</button>
@@ -33,26 +44,29 @@ function addBookToTable(book,index){
 
 
     editButton.addEventListener("click",function(){
-        booktitle.value = book.title;
-        author.value = book.author;
-        publicationYear.value = book.year;
-        genre.value= book.genre;
-        status.value = book.status;
+        booktitle.value = book.Title;
+        author.value = book.Author;
+        publicationYear.value = book.PublicationYear;
+        genre.value= book.Genre;
+        status.value = book.Status;
 
         editIndex = index;
         submitButton.textContent = "Update";
     });
 
-    deleteButton.addEventListener("click",function(){
-        books.splice(index, 1);
-        localStorage.setItem("books", JSON.stringify(books));
-        newRow.remove();
+   deleteButton.addEventListener("click", async function () {
+
+    await fetch(`http://127.0.0.1:5000/api/books/${book.BookID}`, {
+        method: "DELETE"
     });
+
+    loadBooks();
+});
 
     bookTableBody.appendChild(newRow);
 }
 
-form.addEventListener("submit",function(event){
+form.addEventListener("submit",async function(event){
     event.preventDefault();
 const titleValue = booktitle.value;
 const authorValue= author.value;
@@ -70,38 +84,30 @@ if(
 }
 
 const book = {
-    title: titleValue,
-    author: authorValue,
-    year: yearValue,
-    genre: genreValue,
-    status: statusValue
+    BookID: books.length + 1,
+    Title: titleValue,
+    Author: authorValue,
+    PublicationYear: Number(yearValue),
+    Genre: genreValue,
+    Status: statusValue
 }; 
 
 
 
-if(editIndex=== -1){
-    books.push(book);
-}else{
-    books[editIndex]=book;
-}
-
-localStorage.setItem("books", JSON.stringify(books));
-bookTableBody.innerHTML = "";
-books.forEach(function(book, index){
-    addBookToTable(book, index);
+await fetch("http://127.0.0.1:5000/api/books", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(book)
 });
-
-editIndex = -1;
-submitButton.textContent = "Add";
 
 form.reset();
 
+loadBooks();
 });
 
-books.forEach(function(book,index){
-    addBookToTable(book,index);
-    
-});
+loadBooks();
 
 searchInput.addEventListener("keyup",function(){
 
