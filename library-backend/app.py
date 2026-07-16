@@ -28,6 +28,9 @@ def get_books():
 @app.route("/api/books", methods=["POST"])
 def add_book():
     data = request.get_json()
+    
+    if not data.get("Title"):
+        return jsonify({"error": "Title is required"}), 400
 
     sql = """
     INSERT INTO Book (BookID, Title, Author, PublicationYear, Genre, Status)
@@ -46,16 +49,53 @@ def add_book():
     cursor.execute(sql, values)
     db.commit()
 
-    return jsonify({"message": "Book added successfully"})
+    return jsonify({"message": "Book added successfully"}), 201
 
-@app.route("/api/books/<int:book_id>",methods=["DELETE"])
+@app.route("/api/books/<int:book_id>", methods=["DELETE"])
 def delete_book(book_id):
-    sql="DELETE FROM Book WHERE BookID = %s"
 
-    cursor.execute(sql, (book_id,))
+    cursor.execute("DELETE FROM Book WHERE BookID = %s", (book_id,))
     db.commit()
 
-    return jsonify({"message": "Book deleted succesfully"})
+    if cursor.rowcount == 0:
+        return jsonify({"error": "Book not found"}), 404
+
+    return jsonify({"message": "Book deleted successfully"}), 200
+
+
+@app.route("/api/books/<int:book_id>", methods=["PUT"])
+def update_book(book_id):
+    data = request.get_json()
+
+    if not data.get("Title"):
+        return jsonify({"error": "Title is required"}), 400
+
+    sql = """
+    UPDATE Book
+    SET Title=%s,
+        Author=%s,
+        PublicationYear=%s,
+        Genre=%s,
+        Status=%s
+    WHERE BookID=%s
+    """
+
+    values = (
+        data["Title"],
+        data["Author"],
+        data["PublicationYear"],
+        data["Genre"],
+        data["Status"],
+        book_id
+    )
+
+    cursor.execute(sql, values)
+    db.commit()
+
+    if cursor.rowcount == 0:
+        return jsonify({"error": "Book not found"}), 404
+
+    return jsonify({"message": "Book updated successfully"}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)

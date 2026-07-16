@@ -11,7 +11,7 @@ const searchInput = document.getElementById("searchInput");
 const noResultMessage = document.getElementById("noResultMessage");
 
 let books=[];
-let editIndex = -1;
+let editBookId = null;
 
 async function loadBooks(){
     const response = await fetch("http://127.0.0.1:5000/api/books");
@@ -50,7 +50,7 @@ function addBookToTable(book,index){
         genre.value= book.Genre;
         status.value = book.Status;
 
-        editIndex = index;
+        editBookId = book.BookID;
         submitButton.textContent = "Update";
     });
 
@@ -94,16 +94,31 @@ const book = {
 
 
 
-await fetch("http://127.0.0.1:5000/api/books", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify(book)
-});
+if (editBookId === null) {
+
+    await fetch("http://127.0.0.1:5000/api/books", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(book)
+    });
+
+} else {
+
+    await fetch(`http://127.0.0.1:5000/api/books/${editBookId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(book)
+    });
+
+    editBookId = null;
+    submitButton.textContent = "Add";
+}
 
 form.reset();
-
 loadBooks();
 });
 
