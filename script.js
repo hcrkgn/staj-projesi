@@ -1,3 +1,7 @@
+if(!localStorage.getItem("loggedIn")){
+    window.location.href="login.html";
+}
+
 
 const form= document.getElementById("bookForm");
 const booktitle = document.getElementById("bookTitle");
@@ -6,7 +10,7 @@ const publicationYear = document.getElementById("publicationYear");
 const genre = document.getElementById("genre");
 const status = document.getElementById("status");
 const bookTableBody = document.getElementById("bookTableBody");
-const submitButton = document.querySelector('button[type="submit"]');
+const submitButton = document.getElementById("submitButton");
 const searchInput = document.getElementById("searchInput");
 const noResultMessage = document.getElementById("noResultMessage");
 
@@ -151,3 +155,13 @@ searchInput.addEventListener("keyup",function(){
     }
 
     });
+
+const logoutButton = document.getElementById("logoutButton");
+
+logoutButton.addEventListener("click", function(){
+
+    localStorage.removeItem("loggedIn");
+
+    window.location.href = "login.html";
+
+});  

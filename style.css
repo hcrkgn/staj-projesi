@@ -124,3 +124,8 @@ form{
     padding: 8px 12px;
     margin-right: 5px;
 }
+
+#logoutButton{
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
