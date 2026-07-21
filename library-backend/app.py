@@ -28,12 +28,34 @@ def get_books():
 
 @app.route("/api/books", methods=["POST"])
 def add_book():
+
     data = request.get_json()
-    
-    if not data.get("Title"):
+
+    title = data.get("Title", "").strip()
+    author = data.get("Author", "").strip()
+
+    if title == "":
         return jsonify({"error": "Title is required"}), 400
 
-    collection.insert_one(data)
+    if author == "":
+        return jsonify({"error": "Author is required"}), 400
+
+    if "<" in title or ">" in title:
+        return jsonify({"error": "Invalid characters in title"}), 400
+
+    if "<" in author or ">" in author:
+        return jsonify({"error": "Invalid characters in author"}), 400
+
+    book = {
+        "BookID": data["BookID"],
+        "Title": title,
+        "Author": author,
+        "PublicationYear": data["PublicationYear"],
+        "Genre": data["Genre"],
+        "Status": data["Status"]
+    }
+
+    collection.insert_one(book)
 
     return jsonify({"message": "Book added successfully"}), 201
 
@@ -53,17 +75,30 @@ def delete_book(book_id):
 
 @app.route("/api/books/<int:book_id>", methods=["PUT"])
 def update_book(book_id):
+
     data = request.get_json()
 
-    if not data.get("Title"):
+    title = data.get("Title", "").strip()
+    author = data.get("Author", "").strip()
+
+    if title == "":
         return jsonify({"error": "Title is required"}), 400
+
+    if author == "":
+        return jsonify({"error": "Author is required"}), 400
+
+    if "<" in title or ">" in title:
+        return jsonify({"error": "Invalid characters in title"}), 400
+
+    if "<" in author or ">" in author:
+        return jsonify({"error": "Invalid characters in author"}), 400
 
     result = collection.update_one(
         {"BookID": book_id},
         {
             "$set": {
-                "Title": data["Title"],
-                "Author": data["Author"],
+                "Title": title,
+                "Author": author,
                 "PublicationYear": data["PublicationYear"],
                 "Genre": data["Genre"],
                 "Status": data["Status"]
@@ -83,8 +118,17 @@ def register():
 
     data = request.get_json()
 
-    username = data.get("Username")
-    password = data.get("Password")
+    username = data.get("Username", "").strip()
+    password = data.get("Password", "").strip()
+
+    if len(username) < 3:
+        return jsonify({"error": "Username must be at least 3 characters"}), 400
+
+    if len(password) < 6:
+        return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+    if "<" in username or ">" in username:
+        return jsonify({"error": "Invalid username"}), 400
 
     if not username or not password:
         return jsonify({"error": "Username and Password are required"}), 400
@@ -115,8 +159,11 @@ def login():
 
     data = request.get_json()
 
-    username = data.get("Username")
-    password = data.get("Password")
+    username = data.get("Username", "").strip()
+    password = data.get("Password", "").strip()
+
+    if username == "" or password == "":
+        return jsonify({"error": "Please fill all fields"}), 400
 
     user = user_collection.find_one({"Username": username})
 

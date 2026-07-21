@@ -31,17 +31,34 @@ async function loadBooks(){
 function addBookToTable(book,index){
     const newRow = document.createElement("tr");
 
-    newRow.innerHTML=`
-        <td>${book.Title}</td>
-        <td>${book.Author}</td>
-        <td>${book.PublicationYear}</td>
-        <td>${book.Genre}</td>
-        <td>${book.Status}</td>
-        <td>
-            <button class ="edit-btn"> Edit</button>
-            <button class="delete-btn">Delete</button>
-        </td>
-    `;
+const titleCell = document.createElement("td");
+titleCell.textContent = book.Title;
+
+const authorCell = document.createElement("td");
+authorCell.textContent = book.Author;
+
+const yearCell = document.createElement("td");
+yearCell.textContent = book.PublicationYear;
+
+const genreCell = document.createElement("td");
+genreCell.textContent = book.Genre;
+
+const statusCell = document.createElement("td");
+statusCell.textContent = book.Status;
+
+const actionCell = document.createElement("td");
+
+actionCell.innerHTML = `
+<button class="edit-btn">Edit</button>
+<button class="delete-btn">Delete</button>
+`;
+
+newRow.appendChild(titleCell);
+newRow.appendChild(authorCell);
+newRow.appendChild(yearCell);
+newRow.appendChild(genreCell);
+newRow.appendChild(statusCell);
+newRow.appendChild(actionCell);
 
     const editButton = newRow.querySelector(".edit-btn");
     const deleteButton =newRow.querySelector(".delete-btn");
