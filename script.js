@@ -1,8 +1,9 @@
+// Redirect user to login page if not logged in
 if(!localStorage.getItem("loggedIn")){
     window.location.href="login.html";
 }
 
-
+const API_URL = "http://127.0.0.1:5000/api/books";
 const form= document.getElementById("bookForm");
 const booktitle = document.getElementById("bookTitle");
 const author = document.getElementById("author");
@@ -10,27 +11,30 @@ const publicationYear = document.getElementById("publicationYear");
 const genre = document.getElementById("genre");
 const status = document.getElementById("status");
 const bookTableBody = document.getElementById("bookTableBody");
-const submitButton = document.getElementById("submitButton");
+const submitButton = document.querySelector('button[type="submit"]');
 const searchInput = document.getElementById("searchInput");
 const noResultMessage = document.getElementById("noResultMessage");
 
-let books=[];
+let books= [];
 let editBookId = null;
 
+// Load all books from the backend
 async function loadBooks(){
-    const response = await fetch("http://127.0.0.1:5000/api/books");
+    const response = await fetch(API_URL);
     books = await response.json();
 
     bookTableBody.innerHTML="";
 
-    books.forEach(function(book,index){
-        addBookToTable(book,index);
+    books.forEach(function(book){
+        addBookToTable(book);
     });
 }
 
-function addBookToTable(book,index){
+// Add one book to the table
+function addBookToTable(book){
     const newRow = document.createElement("tr");
 
+// Create table cells
 const titleCell = document.createElement("td");
 titleCell.textContent = book.Title;
 
@@ -46,6 +50,7 @@ genreCell.textContent = book.Genre;
 const statusCell = document.createElement("td");
 statusCell.textContent = book.Status;
 
+// Create action buttons
 const actionCell = document.createElement("td");
 
 actionCell.innerHTML = `
@@ -60,10 +65,12 @@ newRow.appendChild(genreCell);
 newRow.appendChild(statusCell);
 newRow.appendChild(actionCell);
 
+
     const editButton = newRow.querySelector(".edit-btn");
     const deleteButton =newRow.querySelector(".delete-btn");
 
 
+    // Fill the form with selected book information
     editButton.addEventListener("click",function(){
         booktitle.value = book.Title;
         author.value = book.Author;
@@ -75,9 +82,10 @@ newRow.appendChild(actionCell);
         submitButton.textContent = "Update";
     });
 
+    // Delete selected book
    deleteButton.addEventListener("click", async function () {
 
-    await fetch(`http://127.0.0.1:5000/api/books/${book.BookID}`, {
+    await fetch(`${API_URL}/${book.BookID}`, {
         method: "DELETE"
     });
 
@@ -87,6 +95,7 @@ newRow.appendChild(actionCell);
     bookTableBody.appendChild(newRow);
 }
 
+// Add a new book or update an existing one
 form.addEventListener("submit",async function(event){
     event.preventDefault();
 const titleValue = booktitle.value;
@@ -114,10 +123,10 @@ const book = {
 }; 
 
 
-
+// Add new book
 if (editBookId === null) {
 
-    await fetch("http://127.0.0.1:5000/api/books", {
+    await fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -125,9 +134,10 @@ if (editBookId === null) {
         body: JSON.stringify(book)
     });
 
+// Update existing book
 } else {
 
-    await fetch(`http://127.0.0.1:5000/api/books/${editBookId}`, {
+    await fetch(`${API_URL}/${editBookId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -143,8 +153,10 @@ form.reset();
 loadBooks();
 });
 
+// Load books when page opens
 loadBooks();
 
+// Search books in the table
 searchInput.addEventListener("keyup",function(){
 
     const searchText = searchInput.value.toLowerCase();
@@ -173,6 +185,7 @@ searchInput.addEventListener("keyup",function(){
 
     });
 
+// Logout user
 const logoutButton = document.getElementById("logoutButton");
 
 logoutButton.addEventListener("click", function(){

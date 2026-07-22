@@ -6,18 +6,57 @@ import bcrypt
 app = Flask(__name__)
 CORS(app)
 
+#Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")
 
 db = client["library_db"]
 
+#Collections
 collection = db["Book"]
 user_collection = db["User"]
+
+# Validate book information
+def validate_book(data):
+
+    book = {
+        "BookID": data.get("BookID"),
+        "Title": data.get("Title", "").strip(),
+        "Author": data.get("Author", "").strip(),
+        "PublicationYear": data.get("PublicationYear"),
+        "Genre": data.get("Genre", "").strip(),
+        "Status": data.get("Status", "").strip()
+    }
+
+    if book["Title"] == "":
+        return None, "Title is required"
+
+    if book["Author"] == "":
+        return None, "Author is required"
+
+    if book["PublicationYear"] is None:
+        return None, "Publication year is required"
+
+    if book["Genre"] == "":
+        return None, "Genre is required"
+
+    if book["Status"] == "":
+        return None, "Status is required"
+
+    if "<" in book["Title"] or ">" in book["Title"]:
+        return None, "Invalid characters in title"
+
+    if "<" in book["Author"] or ">" in book["Author"]:
+        return None, "Invalid characters in author"
+
+    return book, None
+
 
 
 @app.route("/")
 def home():
     return "hello world"
 
+#Get all books
 @app.route("/api/books")
 def get_books():
 
@@ -25,42 +64,24 @@ def get_books():
 
     return jsonify(books)
 
-
+#Add a new book
 @app.route("/api/books", methods=["POST"])
 def add_book():
 
     data = request.get_json()
 
-    title = data.get("Title", "").strip()
-    author = data.get("Author", "").strip()
+    book_data, error = validate_book(data)
 
-    if title == "":
-        return jsonify({"error": "Title is required"}), 400
+    if error:
+        return jsonify({"error": error}), 400
 
-    if author == "":
-        return jsonify({"error": "Author is required"}), 400
-
-    if "<" in title or ">" in title:
-        return jsonify({"error": "Invalid characters in title"}), 400
-
-    if "<" in author or ">" in author:
-        return jsonify({"error": "Invalid characters in author"}), 400
-
-    book = {
-        "BookID": data["BookID"],
-        "Title": title,
-        "Author": author,
-        "PublicationYear": data["PublicationYear"],
-        "Genre": data["Genre"],
-        "Status": data["Status"]
-    }
-
-    collection.insert_one(book)
+    collection.insert_one(book_data)
 
     return jsonify({"message": "Book added successfully"}), 201
 
 
 
+#Delete a book by BookID
 @app.route("/api/books/<int:book_id>", methods=["DELETE"])
 def delete_book(book_id):
 
@@ -70,39 +91,24 @@ def delete_book(book_id):
         return jsonify({"error": "Book not found"}), 404
 
     return jsonify({"message": "Book deleted successfully"}), 200
+
     
 
-
+# Update book information
 @app.route("/api/books/<int:book_id>", methods=["PUT"])
 def update_book(book_id):
 
     data = request.get_json()
 
-    title = data.get("Title", "").strip()
-    author = data.get("Author", "").strip()
+    book_data, error = validate_book(data)
 
-    if title == "":
-        return jsonify({"error": "Title is required"}), 400
-
-    if author == "":
-        return jsonify({"error": "Author is required"}), 400
-
-    if "<" in title or ">" in title:
-        return jsonify({"error": "Invalid characters in title"}), 400
-
-    if "<" in author or ">" in author:
-        return jsonify({"error": "Invalid characters in author"}), 400
+    if error:
+        return jsonify({"error": error}), 400
 
     result = collection.update_one(
         {"BookID": book_id},
         {
-            "$set": {
-                "Title": title,
-                "Author": author,
-                "PublicationYear": data["PublicationYear"],
-                "Genre": data["Genre"],
-                "Status": data["Status"]
-            }
+            "$set": book_data
         }
     )
 
@@ -112,7 +118,7 @@ def update_book(book_id):
     return jsonify({"message": "Book updated successfully"}), 200
 
 
-
+#Register a new user
 @app.route("/api/register", methods=["POST"])
 def register():
 
@@ -154,6 +160,7 @@ def register():
 
 
 
+# User login
 @app.route("/api/login", methods=["POST"])
 def login():
 

@@ -1,5 +1,6 @@
 const form = document.getElementById("registerForm");
 const message = document.getElementById("message");
+const API_URL = "http://127.0.0.1:5000/api/register";
 
 form.addEventListener("submit", async function(event){
 
@@ -8,7 +9,7 @@ form.addEventListener("submit", async function(event){
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    const response = await fetch("http://127.0.0.1:5000/api/register",{
+    const response = await fetch(API_URL,{
 
         method:"POST",
 
