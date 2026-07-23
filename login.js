@@ -6,6 +6,9 @@ form.addEventListener("submit", async function(event){
 
     event.preventDefault();
 
+    message.style.display = "none";
+    message.textContent = "";
+
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
@@ -36,7 +39,8 @@ form.addEventListener("submit", async function(event){
 
     }else{
 
-        message.textContent=result.error;
+       message.style.display = "block";
+       message.textContent = result.error;
 
     }
 

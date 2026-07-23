@@ -126,7 +126,7 @@ const book = {
 // Add new book
 if (editBookId === null) {
 
-    await fetch(API_URL, {
+    const response = await fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -134,16 +134,30 @@ if (editBookId === null) {
         body: JSON.stringify(book)
     });
 
+    const result = await response.json();
+
+    if (!response.ok) {
+        alert(result.error);
+        return;
+    }
+
 // Update existing book
 } else {
 
-    await fetch(`${API_URL}/${editBookId}`, {
+    const response = await fetch(`${API_URL}/${editBookId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(book)
     });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        alert(result.error);
+        return;
+    }
 
     editBookId = null;
     submitButton.textContent = "Add";

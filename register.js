@@ -6,6 +6,9 @@ form.addEventListener("submit", async function(event){
 
     event.preventDefault();
 
+    message.style.display = "none";
+    message.textContent = "";
+
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
@@ -28,6 +31,17 @@ form.addEventListener("submit", async function(event){
 
     const result = await response.json();
 
-    message.textContent = result.message || result.error;
+   message.style.display = "block";
 
+   if(response.ok){
+       message.style.color = "#155724";
+       message.style.backgroundColor = "#d4edda";
+       message.style.border = "1px solid #c3e6cb";
+    }else{
+       message.style.color = "#b00020";
+       message.style.backgroundColor = "#fdecea";
+       message.style.border = "1px solid #f5c2c7";
+    }
+
+    message.textContent = result.message || result.error;
 });
