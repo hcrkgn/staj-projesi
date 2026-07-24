@@ -3,7 +3,7 @@ if(!localStorage.getItem("loggedIn")){
     window.location.href="login.html";
 }
 
-const API_URL = "http://127.0.0.1:5000/api/books";
+const API_URL = "https://library-system-f7j8.onrender.com/api/books";
 const form= document.getElementById("bookForm");
 const booktitle = document.getElementById("bookTitle");
 const author = document.getElementById("author");

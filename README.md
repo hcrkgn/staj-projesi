@@ -43,6 +43,13 @@ python app.py
 
 MongoDB Atlas is used to store user and book data.
 
+## Deployment
+
+The project is deployed on Render.
+
+Live Demo:
+https://library-system-f7j8.onrender.com
+
 ## API Endpoints
 
 ### Books

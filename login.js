@@ -1,6 +1,6 @@
 const form = document.getElementById("loginForm");
 const message = document.getElementById("message");
-const API_URL = "http://127.0.0.1:5000/api/login";
+const API_URL = "https://library-system-f7j8.onrender.com/api/login";
 
 form.addEventListener("submit", async function(event){
 
