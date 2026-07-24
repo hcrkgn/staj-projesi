@@ -15,6 +15,7 @@ const submitButton = document.querySelector('button[type="submit"]');
 const searchInput = document.getElementById("searchInput");
 const noResultMessage = document.getElementById("noResultMessage");
 
+
 let books= [];
 let editBookId = null;
 
@@ -114,13 +115,16 @@ if(
 }
 
 const book = {
-    BookID: books.length + 1,
+    BookID:
+        books.length > 0
+            ? Math.max(...books.map(book => book.BookID)) + 1
+            : 1,
     Title: titleValue,
     Author: authorValue,
     PublicationYear: Number(yearValue),
     Genre: genreValue,
     Status: statusValue
-}; 
+};
 
 
 // Add new book

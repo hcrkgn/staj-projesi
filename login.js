@@ -9,8 +9,8 @@ form.addEventListener("submit", async function(event){
     message.style.display = "none";
     message.textContent = "";
 
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
 
     const response = await fetch(API_URL,{
 
@@ -33,9 +33,11 @@ form.addEventListener("submit", async function(event){
 
     if(response.ok){
 
-        localStorage.setItem("loggedIn","true");
+      localStorage.setItem("loggedIn","true");
+      localStorage.setItem("UserID", result.UserID);
+      localStorage.setItem("Username", result.Username);
 
-        window.location.href="index.html";
+      window.location.href="index.html";
 
     }else{
 

@@ -2,12 +2,16 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from pymongo import MongoClient
 import bcrypt
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
 #Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+
+client = MongoClient(os.environ.get("MONGO_URI"))
 
 db = client["library_db"]
 
@@ -149,7 +153,18 @@ def register():
         bcrypt.gensalt()
     )
 
+    last_user = user_collection.find_one(
+    sort=[("UserID", -1)]
+    )
+
+    if last_user:
+        new_user_id = last_user["UserID"] + 1
+    else:
+        new_user_id = 1
+
+
     user = {
+        "UserID": new_user_id,
         "Username": username,
         "Password": hashed_password.decode("utf-8")
     }
@@ -182,10 +197,15 @@ def login():
         user["Password"].encode("utf-8")
     ):
 
-        return jsonify({"message": "Login successful"}), 200
-
+        return jsonify({
+            "message": "Login successful",
+            "UserID": user["UserID"],
+            "Username": user["Username"]
+        }), 200
+    
     return jsonify({"error": "Invalid username or password"}), 401
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
